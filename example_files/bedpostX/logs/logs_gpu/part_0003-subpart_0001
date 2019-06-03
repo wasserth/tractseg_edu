@@ -1,0 +1,35 @@
+----------------------------------------------------- 
+---------------- PART 3 SUBPART 1 ------------------- 
+----------------------------------------------------- 
+
+------------------- FIT ON GPU ---------------------- 
+--- fit_PVM_single_c --- 
+Processing 12435 voxels 
+time DTI: 0.738079 seconds
+NUM BLOCKS: 12435
+THREADS PER BLOCK : 64
+Shared Memory Used in fit_PVM_single_c: 4468
+--- end fit_PVM_single_c --- 
+TIME: 2.10682 seconds
+-----------------------------------------------------
+
+----- MCMC ALGORITHM PART INITIALITATION ON GPU ----- 
+Shared Memory Used in init_Fibres_Multifibres: 2656
+TIME: 0.00216198 seconds
+-----------------------------------------------------
+
+--------- MCMC ALGORITHM PART BURNIN ON GPU --------- 
+Processing 12440 voxels 
+NUM BLOCKS: 1555
+THREADS PER BLOCK : 256
+Shared Memory Used in runmcmc_burnin: 5568
+TIME: 4.8679 seconds
+-----------------------------------------------------
+
+--------- MCMC ALGORITHM PART RECORD ON GPU --------- 
+Processing 12440 voxels 
+NUM BLOCKS: 1555
+THREADS PER BLOCK : 256
+Shared Memory Used in runmcmc_record: 5568
+TIME: 6.15812 seconds
+-----------------------------------------------------

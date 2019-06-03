@@ -1,0 +1,59 @@
+#!/bin/sh
+nparts=0
+if [ 4 -eq 1 ]; then
+#1 part (GPU) and several subparts
+#voxels processed in each subpart are 12800 or more if the last one is less than 6400 (1 part less)
+	nparts=$((100937/12800))
+	if [ $nparts%12800 != 0 ];then 
+		nparts=$(($nparts + 1)) 
+	fi
+	last_part=$((100937-((($nparts-1))*12800)))
+	if [ $last_part -lt 6400 ];then 
+		nparts=$(($nparts - 1)) 
+	fi
+else
+	nparts=4
+fi
+
+echo
+echo "----- Bedpostx Monitor -----"
+finished=0
+lastprinted=0
+havedad=2
+while [ $finished -eq 0 ] ; do
+    nfin=0
+    part=0
+    errorFiles=`ls /mnt/jakob/E130-Personal/Wasserthal/HCP/994273/32g_25mm/bedpostX_input.bedpostX/logs/*.e* 2> /dev/null `
+    for errorFile in $errorFiles
+    do
+        if [ -s $errorFile ]; then
+            echo An error ocurred. Please check file $errorFile
+            kill -9 21761
+            exit 1
+        fi
+    done
+    while [ $part -le $nparts ];do
+        if [ -e /mnt/jakob/E130-Personal/Wasserthal/HCP/994273/32g_25mm/bedpostX_input.bedpostX/logs/monitor/$part ]; then
+            nfin=$(($nfin + 1))
+        fi
+        part=$(($part + 1))
+    done
+    newmessages=$(($nfin - $lastprinted))
+    while [ "$newmessages" -gt 0 ];do
+        lastprinted=$(($lastprinted + 1))
+        echo $lastprinted parts processed out of $nparts
+        newmessages=$(($newmessages - 1))
+    done
+    if [ -f /mnt/jakob/E130-Personal/Wasserthal/HCP/994273/32g_25mm/bedpostX_input.bedpostX/xfms/eye.mat ] ; then
+        finished=1
+        echo "All parts processed"
+	exit 
+    fi
+    if [ ! $havedad -gt 0 ]; then
+       exit 0
+    fi
+    if [ "x" = "x" ]; then
+        havedad=`ps -e -o pid 2>&1| grep "21761\b" | wc -l`
+    fi
+    sleep 50;
+done
