@@ -1,4 +1,3 @@
 torch>=1.0.0
-#mrtrix3 RC3
-#pip install https://github.com/MIC-DKFZ/TractSeg/archive/v1.9.zip
-#optional: fsl
+#pip install https://github.com/MIC-DKFZ/TractSeg/archive/v2.0.zip
+#optional: fsl mrtrix3 RC3
