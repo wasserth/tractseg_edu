@@ -50,7 +50,6 @@ def show_image(path):
 
 
 def get_3D_volume(path, opacity=1, color="red"):
-    enable_plotly_in_cell()
     data = nib.load(path).get_data()
     verts, faces = measure.marching_cubes_classic(data, level=0.)
     x,y,z=zip(*verts)
@@ -64,22 +63,7 @@ def get_3D_volume(path, opacity=1, color="red"):
     return trace
 
 
-def plot_3D_volume(path,):
-    enable_plotly_in_cell()
-    bundle = get_3D_volume(path, color="salmon")
-    plotly.offline.iplot([bundle])
-
-
-def plot_3D_volume_with_brain_mask(path, brain_mask_path):
-    enable_plotly_in_cell()
-    brain_mask = get_3D_volume(brain_mask_path, opacity=0.1, color="silver")
-    bundle = get_3D_volume(path, color="salmon")
-    plotly.offline.iplot([brain_mask, bundle])
-  
-
-def plot_streamlines(path, ref_img_path, subsampling=10):
-    enable_plotly_in_cell()
-
+def get_streamlines_plot(path, ref_img_path, subsampling=10):
     affine = nib.load(ref_img_path).affine
 
     streams, hdr = trackvis.read(path)
@@ -102,8 +86,22 @@ def plot_streamlines(path, ref_img_path, subsampling=10):
     return traces
 
 
+def plot_3D_volume(path,):
+    enable_plotly_in_cell()
+    bundle = get_3D_volume(path, color="salmon")
+    plotly.offline.iplot([bundle])
+
+
+def plot_3D_volume_with_brain_mask(path, brain_mask_path):
+    enable_plotly_in_cell()
+    brain_mask = get_3D_volume(brain_mask_path, opacity=0.1, color="silver")
+    bundle = get_3D_volume(path, color="salmon")
+    plotly.offline.iplot([brain_mask, bundle])
+  
+
 def plot_streamlines_with_brain_mask_and_endings_mask(sl_path, brain_mask_path, endings_path,
                                                       subsampling=10):
+    enable_plotly_in_cell()
     brain_mask = get_3D_volume(brain_mask_path, opacity=0.1, color="silver")
     endings_mask = get_3D_volume(endings_path, opacity=0.2, color="salmon")
     t = get_streamlines_plot(sl_path,brain_mask_path, subsampling=subsampling)
@@ -112,9 +110,8 @@ def plot_streamlines_with_brain_mask_and_endings_mask(sl_path, brain_mask_path, 
     figure=go.Figure(data=[brain_mask, endings_mask] + t, layout=layout)
     plotly.offline.iplot(figure)
 
-    
-def merge_masks(path_in_1, path_in_2, path_out):
 
+def merge_masks(path_in_1, path_in_2, path_out):
     ref_img = nib.load(path_in_1)  # use first mask as ref image
 
     new_mask = np.zeros(ref_img.get_data().shape)
